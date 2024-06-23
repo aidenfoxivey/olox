@@ -1,5 +1,11 @@
 let had_error = ref false
 
+let report line where message =
+  let msg = string_of_int line ^ " " ^ where ^ " " ^ message ^ "\n" in
+  prerr_string msg
+
+let error line message = report line "" message
+
 type tokentype =
   | LEFT_PAREN
   | RIGHT_PAREN
@@ -114,20 +120,80 @@ let token_as_string token =
 
 type scanner = {
   source : string;
-  tokens : token list;
-  start : int;
-  current : int;
-  line : int;
+  mutable tokens : token list;
+  mutable start : int;
+  mutable current : int;
+  mutable line : int;
 }
 
 let new_scanner source tokens =
-  { source = source; tokens = tokens; start = 0; current = 0; line = 1 }
+  { source; tokens; start = 0; current = 0; line = 1 }
 
-let report line where message =
-  let msg = string_of_int line ^ " " ^ where ^ " " ^ message in
-  prerr_string msg
+let is_at_end scanner = scanner.current >= String.length scanner.source
 
-let error line message = report line "" message
+let add_token scanner token_type =
+  let lexeme = String.sub scanner.source scanner.start scanner.current in
+  let t = { type_ = token_type; lexeme; literal = None; line = scanner.line } in
+  scanner.tokens <- t :: scanner.tokens
+
+let add_token_with_literal scanner token_type literal =
+  let lexeme = String.sub scanner.source scanner.start scanner.current in
+  let t = { type_ = token_type; lexeme; literal; line = scanner.line } in
+  scanner.tokens <- t :: scanner.tokens
+
+let advance scanner =
+  scanner.current <- scanner.current + 1;
+  scanner.source.[scanner.current]
+
+(* Oddly, OCaml uses the NULL character here. *)
+let peek scanner =
+  if is_at_end scanner then '\000' else scanner.source.[scanner.current]
+
+let match_token scanner expected =
+  if is_at_end scanner || scanner.source.[scanner.current] != expected then
+    false
+  else (
+    scanner.current <- scanner.current + 1;
+    true)
+
+let scan_token scanner =
+  let c = advance scanner in
+  match c with
+  | '(' -> add_token scanner LEFT_PAREN
+  | ')' -> add_token scanner RIGHT_PAREN
+  | '{' -> add_token scanner LEFT_BRACE
+  | '}' -> add_token scanner RIGHT_BRACE
+  | ',' -> add_token scanner COMMA
+  | '.' -> add_token scanner DOT
+  | '-' -> add_token scanner MINUS
+  | '+' -> add_token scanner PLUS
+  | ';' -> add_token scanner SEMICOLON
+  | '*' -> add_token scanner STAR
+  | '!' ->
+      if match_token scanner '=' then add_token scanner BANG_EQUAL
+      else add_token scanner BANG
+  | '=' ->
+      if match_token scanner '=' then add_token scanner EQUAL_EQUAL
+      else add_token scanner EQUAL
+  | '<' ->
+      if match_token scanner '=' then add_token scanner LESS_EQUAL
+      else add_token scanner LESS
+  | '>' ->
+      if match_token scanner '=' then add_token scanner GREATER_EQUAL
+      else add_token scanner GREATER
+  | '/' -> if match_token scanner '/' then () else add_token scanner SLASH
+  | _ -> error scanner.line "Unexpected character."
+
+let rec scan_tokens scanner =
+  if not (is_at_end scanner) then (
+    scanner.start <- scanner.current;
+    scan_token scanner;
+    scan_tokens scanner)
+  else
+    let t = { type_ = EOF; lexeme = ""; literal = None; line = scanner.line } in
+    scanner.tokens <- t :: scanner.tokens;
+    List.rev scanner.tokens (* Reverse the list to maintain the correct order *)
+
 let run _ = ()
 
 let run_file path =
