@@ -1,3 +1,10 @@
+Preamble:
+
+- The main code of my implementation is licensed as below.
+- The `examples/` subdirectory is licensed under the MIT license, as per the original requirements.
+
+You can retrieve a copy of it yourself via <https://github.com/munificent/craftinginterpreters>.
+
 Copyright (c) 2024 Aiden Fox Ivey.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
