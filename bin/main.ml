@@ -305,7 +305,7 @@ let run source =
   (* Print each token *)
   List.iter
     (fun token ->
-      Printf.printf "Type: %s, Lexeme: %s, Line: %d"
+      Printf.printf "%s \"%s\" on line %d"
         (tokentype_as_string token.type_)
         token.lexeme token.line;
       (match token.literal with
