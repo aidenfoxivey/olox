@@ -100,7 +100,11 @@ module Parser = struct
       let expr = expression parser in
       ignore (consume parser RIGHT_PAREN "Expect ')' after expression.");
       Expr.Grouping expr)
-    else raise (Failure "Unexpected token in primary expression.")
+    else 
+      raise (Failure "Unexpected token in primary expression.")
 
   and expression parser = equality parser
+
+  let parse parser =
+    expression parser
 end
