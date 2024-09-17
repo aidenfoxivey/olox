@@ -34,7 +34,7 @@ module Scanner = struct
     scanner.current <- scanner.current + 1;
     c
 
-  (* Oddly, OCaml uses the NULL character here. *)
+  (* Oddly, OCaml uses the NULL character written as \000. *)
   let peek scanner =
     if is_at_end scanner then '\000' else scanner.source.[scanner.current]
 
