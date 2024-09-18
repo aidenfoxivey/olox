@@ -11,6 +11,7 @@ doc: "https://forgejo.aidenfoxivey.com/aidenfoxivey/olox/wiki"
 depends: [
   "ocaml"
   "dune" {>= "3.14"}
+  "ounit2" {with-test}
   "odoc" {with-doc}
 ]
 build: [

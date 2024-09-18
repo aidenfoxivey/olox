@@ -19,7 +19,7 @@
  (name olox)
  (synopsis "Lox interpreter in OCaml.")
  (description "Lox interpreter based on Crafting Interpreters by Robert Nystrom.")
- (depends ocaml dune)
+ (depends ocaml dune (ounit2 :with-test))
  (tags
   (interpreter lox)))
 
