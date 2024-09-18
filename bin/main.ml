@@ -8,7 +8,7 @@ let run source =
   let scanner = Scanner.create source in
   let tokens = Scanner.scan_tokens scanner in
   let parser = Parser.create tokens in
-  let expr = Parser.parse parser in
+  let _ = Parser.parse parser in
 
   (* Print each token *)
   List.iter
@@ -21,9 +21,6 @@ let run source =
       | None -> ());
       Printf.printf "\n")
     tokens
-
-
-
 
 let run_file path =
   let ic = open_in path in

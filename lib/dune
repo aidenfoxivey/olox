@@ -1,3 +1,3 @@
 (library
  (name olox)
- (modules parser scanner tokens utils expr))
+ (modules parser scanner tokens utils expr astprinter interpreter))
